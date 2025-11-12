@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
+
 import {
   signInWithEmailAndPassword,
   GithubAuthProvider,
@@ -15,6 +16,7 @@ import {
   fetchSignInMethodsForEmail,
   signOut,
 } from "firebase/auth";
+
 import { auth } from "../firebase";
 import { router } from "expo-router";
 
@@ -24,6 +26,8 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const showErr = (msg) => setError(msg);
+
   useEffect(() => {
     (async () => {
       await signOut(auth).catch(() => { });
@@ -31,26 +35,20 @@ export default function Login() {
     })();
   }, []);
 
-  const showErr = (msg) => setError(msg);
-
   const handleEmailLogin = async () => {
     setError("");
-
-    if (!email || !password)
-      return showErr("Plotëso email-in dhe fjalëkalimin.");
+    if (!email || !password) return showErr("Plotëso emailin dhe fjalëkalimin.");
 
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
       router.replace("/");
     } catch (err) {
-      console.log("Email error:", err);
       showErr(err.message);
     }
   };
 
   const handleGitHubLogin = async () => {
     setError("");
-
     try {
       const provider = new GithubAuthProvider();
       provider.addScope("user:email");
@@ -63,32 +61,28 @@ export default function Login() {
       if (methods.includes("password")) {
         await signOut(auth);
         return showErr(
-          "Ky email është përdorur me Email/Password. Kyçu me email dhe lidhe GitHub nga brenda aplikacionit."
+          "Ky email përdoret me Email/Password. Kyçu me email dhe lidhe GitHub nga brenda."
         );
       }
 
       router.replace("/");
 
     } catch (err) {
-      console.log("GitHub login error:", err);
-
-      if (err.code === "auth/popup-closed-by-user") {
-        return showErr("Popup u mbyll. Provo përsëri.");
-      }
-
       showErr(err.message);
     }
   };
 
-  if (loading) return (
-    <View style={styles.center}>
-      <ActivityIndicator size="large" color="#007AFF" />
-    </View>
-  );
+  if (loading)
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Kyçu në BonusProject</Text>
+      <Text style={styles.title}>BonusProject</Text>
+      <Text style={styles.subtitle}>Mirësevini, kyçuni për të vazhduar</Text>
 
       {error ? (
         <View style={styles.errorBox}>
@@ -96,32 +90,36 @@ export default function Login() {
         </View>
       ) : null}
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
-      />
+      <View style={styles.card}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#999"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Fjalëkalimi"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Fjalëkalimi"
+          placeholderTextColor="#999"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
 
-      <TouchableOpacity style={styles.button} onPress={handleEmailLogin}>
-        <Text style={styles.buttonText}>Kyçu me Email</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleEmailLogin}>
+          <Text style={styles.buttonText}>Kyçu me Email</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[styles.button, styles.githubButton]}
-        onPress={handleGitHubLogin}
-      >
-        <Text style={styles.buttonText}>Kyçu me GitHub</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, styles.githubButton]}
+          onPress={handleGitHubLogin}
+        >
+          <Text style={styles.buttonText}>Kyçu me GitHub</Text>
+        </TouchableOpacity>
+      </View>
 
       <TouchableOpacity onPress={() => router.push("/register")}>
         <Text style={styles.link}>Nuk ke llogari? Regjistrohu</Text>
@@ -135,49 +133,67 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    justifyContent: "center",
+    backgroundColor: "#f7f8fa",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "white",
+    paddingTop: 60,
   },
 
   title: {
-    fontSize: 26,
-    fontWeight: "bold",
+    fontSize: 32,
+    fontWeight: "800",
+    color: "#222",
+  },
+
+  subtitle: {
+    fontSize: 16,
+    color: "#555",
     marginBottom: 25,
   },
 
   errorBox: {
-    width: "85%",
-    backgroundColor: "#ffdddd",
-    borderColor: "#ff4444",
+    width: "90%",
+    backgroundColor: "#ffe5e5",
     borderWidth: 1,
-    padding: 10,
+    borderColor: "#ff4d4d",
+    padding: 12,
+    borderRadius: 10,
     marginBottom: 15,
-    borderRadius: 8,
   },
 
   errorText: {
     color: "#cc0000",
-    fontWeight: "bold",
+    fontWeight: "600",
     textAlign: "center",
   },
 
+  card: {
+    width: "90%",
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 5,
+  },
+
   input: {
-    width: "85%",
-    borderColor: "#ccc",
-    borderWidth: 1,
-    padding: 12,
+    width: "100%",
+    backgroundColor: "#f2f3f5",
+    padding: 14,
     borderRadius: 10,
     marginBottom: 12,
+    fontSize: 16,
+    color: "#222",
   },
 
   button: {
     backgroundColor: "#007AFF",
-    paddingVertical: 12,
-    width: "85%",
-    alignItems: "center",
+    paddingVertical: 14,
     borderRadius: 10,
+    alignItems: "center",
     marginTop: 10,
   },
 
@@ -186,14 +202,15 @@ const styles = StyleSheet.create({
   },
 
   buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: "white",
+    fontWeight: "700",
     fontSize: 16,
   },
 
   link: {
-    marginTop: 20,
-    color: "#007AFF",
+    marginTop: 25,
     fontSize: 15,
+    color: "#007AFF",
+    fontWeight: "600",
   },
 });

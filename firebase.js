@@ -3,12 +3,13 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDYDwXKYx13P8WW0qZCiDce2xcPA8QvckY",
-  authDomain: "projectbonus-f12a0.firebaseapp.com",
-  projectId: "projectbonus-f12a0",
-  storageBucket: "projectbonus-f12a0.firebasestorage.app",
-  messagingSenderId: "1062116806562",
-  appId: "1:1062116806562:web:42cfe612b8f123115e6cfb"
+  apiKey: "AIzaSyAjawAzcWE8Wo6YWwckoXbX57BLoNfK8I4",
+  authDomain: "bonusproject-66ded.firebaseapp.com",
+  projectId: "bonusproject-66ded",
+  storageBucket: "bonusproject-66ded.firebasestorage.app",
+  messagingSenderId: "123375955493",
+  appId: "1:123375955493:web:3703275bb236cc7718d9cc",
+  measurementId: "G-VHL6CWLX68"
 };
 
 
